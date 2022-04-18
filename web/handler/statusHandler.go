@@ -2,6 +2,7 @@ package handler
 
 import (
 	"back-end/web/model"
+	"back-end/web/util"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -28,7 +29,5 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(js)
+	util.WriteJsonResponse(js, http.StatusOK, w)
 }
