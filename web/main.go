@@ -1,51 +1,21 @@
 package main
 
 import (
-	"encoding/json"
-	"flag"
+	"back-end/web/handler"
+	"back-end/web/model"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-const version = "1.0.0"
-
-type config struct {
-	port int
-	env string
-}
-
-type AppStatus struct {
-	Status string `json:"status"`
-	Environment string `json:"environment"`
-	Version string `json:"version"`
-}
-
 func main() {
-	var cfg config
+	var cfg model.Config
+	cfg.GetConfig()
 
-	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
-	flag.StringVar(&cfg.env, "env", "dev", "Application environment")
-	flag.Parse()
+	handlers := handler.GetStatusHandlers()
+	handlers.AddHandlers()
 
-	http.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
-		currentStatus := AppStatus {
-			Status: "Available",
-			Environment: cfg.env,
-			Version: version,
-		}
-
-		js, err := json.Marshal(currentStatus)
-		if err != nil {
-			log.Println(err)
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(js)
-	})
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), nil)
 	if err != nil {
 		log.Println(err)
 	}
