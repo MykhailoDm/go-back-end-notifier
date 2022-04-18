@@ -10,11 +10,17 @@ import (
 
 func GetStatusHandlers() model.Handlers {
 	return model.Handlers {
-		"/status": getStatus,
+		"/status": requestStatus,
 	}
 }
 
-func getStatus(w http.ResponseWriter, r *http.Request) {
+func requestStatus(w http.ResponseWriter, r *http.Request) {
+	errRsp, err := validateMethod([]string{"GET"}, r.Method, r.URL.Path)
+	if err != nil {
+		errRsp.WriteError(w)
+		return
+	}
+
 	var cfg model.Config
 	cfg.GetConfig()
 
