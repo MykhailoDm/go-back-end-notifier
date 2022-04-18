@@ -27,6 +27,9 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
 	js, err := json.Marshal(currentStatus)
 	if err != nil {
 		log.Println(err)
+		rsp := model.NewErrorResponse(http.StatusInternalServerError, "Issue while building Status response body")
+		rsp.WriteError(w)
+		return
 	}
 
 	util.WriteJsonResponse(js, http.StatusOK, w)
