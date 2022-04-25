@@ -12,8 +12,8 @@ func main() {
 	var cfg model.Config
 	cfg.GetConfig()
 
-	handlers := handler.GetStatusHandlers()
-	handlers.AddHandlers()
+	handler.GetStatusHandlers().AddHandlers()
+	handler.GetAuthHandlers().AddHandlers()
 
 	err := http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), nil)
 	if err != nil {
