@@ -94,3 +94,16 @@ func (m *DBModel) GetNotifications(uid int) ([]*Notification, error) {
 	}
 	return notifications, nil
 } 
+
+func (m *DBModel) CreateNotification(n Notification) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `INSERT INTO notification VALUES(null, ?, ?, ?);`
+	_, err := m.DB.ExecContext(ctx, query, n.Title, n.Name, n.UserId)
+
+	if err != nil {
+		return err
+	}
+	return nil
+} 

@@ -28,7 +28,11 @@ func GetNotificationService(m model.Models) *NotificationService {
 	return ns
 }
 
-func (n *NotificationService) GetNotifications(uid int) ([]*model.Notification, error) {
+func (ns *NotificationService) GetNotifications(uid int) ([]*model.Notification, error) {
 	log.Printf("Retrieving notifications for user: %v", uid)
-	return n.models.DB.GetNotifications(uid)
+	return ns.models.DB.GetNotifications(uid)
+}
+
+func (ns *NotificationService) CreateNotification(n model.Notification) error {
+	return ns.models.DB.CreateNotification(n)
 }

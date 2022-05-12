@@ -23,8 +23,10 @@ func notificationsHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
-	case "GET": getNotifications(ui.Id, w, r)
-	case "POST":	
+	case "GET":
+		getNotifications(ui.Id, w, r)
+	case "POST":
+		createNotification(ui.Id, w, r)
 	}
 }
 
@@ -42,4 +44,20 @@ func getNotifications(id int, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	util.WriteJsonResponse(js, 200, w)
+}
+
+func createNotification(uid int, w http.ResponseWriter, r *http.Request) {
+	var n model.Notification
+	err := json.NewDecoder(r.Body).Decode(&n)
+	if err != nil {
+		model.NewErrorResponse(400, "Invalid json body").WriteError(w)
+		return
+	}
+
+	n.UserId = uid
+	err = ns.CreateNotification(n)
+	if err != nil {
+		model.NewErrorResponse(400, "Bad Request").WriteError(w)
+		return
+	}
 }
