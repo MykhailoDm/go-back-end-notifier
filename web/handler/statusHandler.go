@@ -21,6 +21,11 @@ func requestStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = us.ValidateJwt(w, r)
+	if err != nil {
+		return
+	}
+
 	var cfg model.Config
 	cfg.GetConfig()
 

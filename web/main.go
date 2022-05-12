@@ -18,6 +18,13 @@ func main() {
 	}
 	defer db.Close()
 
+	m := model.Models {
+		DB: model.DBModel{
+			DB: db,
+		},
+	}
+	handler.LoadServices(m)
+	
 	handler.GetStatusHandlers().AddHandlers()
 	handler.GetAuthHandlers().AddHandlers()
 

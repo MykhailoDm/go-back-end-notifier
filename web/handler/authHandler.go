@@ -2,6 +2,7 @@ package handler
 
 import (
 	"back-end/web/model"
+	"back-end/web/service"
 	"back-end/web/util"
 	"encoding/json"
 	"log"
@@ -11,14 +12,10 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var users = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
-}
-
 func GetAuthHandlers() model.Handlers {
 	return model.Handlers {
 		"/auth/signin": signin,
+		"/auth/signup": signup,
 	}
 }
 
@@ -39,10 +36,10 @@ func signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO add proper db users
-	pwd, ok := users[creds.Username]
+	var ui *model.User
+	ui, err = us.FindUserWithPassword(creds.Username)
 
-	if !ok || pwd != creds.Password {
+	if err != nil || !service.PasswordsMatch(ui.Password, creds.Password)  {
 		model.NewErrorResponse(404, "Incorrect password").WriteError(w)
 		return
 	}
@@ -75,4 +72,33 @@ func signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	util.WriteJsonResponse(js, 200, w)
+}
+
+func signup(w http.ResponseWriter, r *http.Request) {
+	errRsp, methodErr := validateMethod([]string{"POST"}, r.Method, r.URL.Path)
+	if methodErr != nil {
+		errRsp.WriteError(w)
+		return
+	}
+
+	var creds model.Credentials
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		model.NewErrorResponse(400, "Invalid json body").WriteError(w)
+		return
+	}
+
+	u := model.User {
+		Id: 0,
+		Username: creds.Username,
+		Password: creds.Password,
+	}
+	
+	err = us.CreateUser(u)
+	if err != nil {
+		model.NewErrorResponse(400, "Username or password already taken").WriteError(w)
+		return
+	}
+
+	w.WriteHeader(200)
 }
