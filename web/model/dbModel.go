@@ -95,6 +95,27 @@ func (m *DBModel) GetNotifications(uid int) ([]*Notification, error) {
 	return notifications, nil
 } 
 
+func (m *DBModel) GetNotification(id int) (*Notification, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `SELECT id, title, name, user_id FROM notification WHERE id = ?;`
+	row := m.DB.QueryRowContext(ctx, query, id)
+	
+	var n Notification
+	err := row.Scan(
+		&n.Id,
+		&n.Title,
+		&n.Name,
+		&n.UserId,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &n, nil
+}
+
 func (m *DBModel) CreateNotification(n Notification) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

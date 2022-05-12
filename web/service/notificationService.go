@@ -33,6 +33,11 @@ func (ns *NotificationService) GetNotifications(uid int) ([]*model.Notification,
 	return ns.models.DB.GetNotifications(uid)
 }
 
+func (ns *NotificationService) GetNotification(id int) (*model.Notification, error) {
+	log.Printf("Retrieving notification with id: %v", id)
+	return ns.models.DB.GetNotification(id)
+}
+
 func (ns *NotificationService) CreateNotification(n model.Notification) error {
 	return ns.models.DB.CreateNotification(n)
 }
