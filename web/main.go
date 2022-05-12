@@ -24,9 +24,10 @@ func main() {
 		},
 	}
 	handler.LoadServices(m)
-	
+
 	handler.GetStatusHandlers().AddHandlers()
 	handler.GetAuthHandlers().AddHandlers()
+	handler.GetNotificationHandlers().AddHandlers()
 
 	err = http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), nil)
 	if err != nil {

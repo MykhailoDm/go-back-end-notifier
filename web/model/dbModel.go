@@ -61,4 +61,36 @@ func (m *DBModel) GetUserWithPassword(username string) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (m *DBModel) GetNotifications(uid int) ([]*Notification, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `SELECT id, title, name, user_id FROM notification WHERE user_id = ?`
+	rows, err := m.DB.QueryContext(ctx, query, uid)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	var notifications []*Notification
+	for rows.Next() {
+		var notification Notification
+		err = rows.Scan(
+			&notification.Id,
+			&notification.Title,
+			&notification.Name,
+			&notification.UserId,
+		)
+		if err != nil {
+			return nil, err
+		}
+		notifications = append(notifications, &notification)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return notifications, nil
 } 
