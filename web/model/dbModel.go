@@ -117,14 +117,21 @@ func (m *DBModel) GetNotification(id int) (*Notification, error) {
 }
 
 func (m *DBModel) CreateNotification(n Notification) error {
+	return m.ExecQueryWithArgs(`INSERT INTO notification VALUES(null, ?, ?, ?);`, n.Title, n.Name, n.UserId)
+} 
+
+func (m *DBModel) DeleteNotification(id int) error {
+	return m.ExecQueryWithArgs(`DELETE FROM notification WHERE id=?;`, id)
+}
+
+func (m *DBModel) ExecQueryWithArgs(query string, args ...any) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `INSERT INTO notification VALUES(null, ?, ?, ?);`
-	_, err := m.DB.ExecContext(ctx, query, n.Title, n.Name, n.UserId)
+	_, err := m.DB.ExecContext(ctx, query, args...)
 
 	if err != nil {
 		return err
 	}
 	return nil
-} 
+}

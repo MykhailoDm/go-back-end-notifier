@@ -61,6 +61,7 @@ func notificationsHandlerFuncById(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		getNotification(nid, w, r)
 	case "DELETE":
+		deleteNotification(nid, w, r)
 	case "PUT":
 	}
 }
@@ -109,6 +110,14 @@ func createNotification(uid int, w http.ResponseWriter, r *http.Request) {
 	err = ns.CreateNotification(n)
 	if err != nil {
 		model.NewErrorResponse(400, "Bad Request").WriteError(w)
+		return
+	}
+}
+
+func deleteNotification(id int, w http.ResponseWriter, r *http.Request) {
+	err := ns.DeleteNotification(id)
+	if err != nil {
+		model.NewErrorResponse(404, "Not Found").WriteError(w)
 		return
 	}
 }
