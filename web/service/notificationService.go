@@ -45,3 +45,7 @@ func (ns *NotificationService) CreateNotification(n model.Notification) error {
 func (ns *NotificationService) DeleteNotification(id int) error {
 	return ns.models.DB.DeleteNotification(id)
 }
+
+func (ns *NotificationService) UpdateNotification(id int, n model.Notification) error {
+	return ns.models.DB.UpdateNotification(id, n)
+}

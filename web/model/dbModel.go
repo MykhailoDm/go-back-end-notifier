@@ -124,6 +124,10 @@ func (m *DBModel) DeleteNotification(id int) error {
 	return m.ExecQueryWithArgs(`DELETE FROM notification WHERE id=?;`, id)
 }
 
+func (m *DBModel) UpdateNotification(id int, n Notification) error {
+	return m.ExecQueryWithArgs(`UPDATE notification SET title = ?, name = ? WHERE id = ?;`, n.Title, n.Name, id)
+}
+
 func (m *DBModel) ExecQueryWithArgs(query string, args ...any) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

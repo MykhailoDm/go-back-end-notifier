@@ -63,6 +63,7 @@ func notificationsHandlerFuncById(w http.ResponseWriter, r *http.Request) {
 	case "DELETE":
 		deleteNotification(nid, w, r)
 	case "PUT":
+		updateNotification(nid, w, r)
 	}
 }
 
@@ -116,6 +117,21 @@ func createNotification(uid int, w http.ResponseWriter, r *http.Request) {
 
 func deleteNotification(id int, w http.ResponseWriter, r *http.Request) {
 	err := ns.DeleteNotification(id)
+	if err != nil {
+		model.NewErrorResponse(404, "Not Found").WriteError(w)
+		return
+	}
+}
+
+func updateNotification(id int, w http.ResponseWriter, r *http.Request) {
+	var n model.Notification
+	err := json.NewDecoder(r.Body).Decode(&n)
+	if err != nil {
+		model.NewErrorResponse(400, "Invalid json body").WriteError(w)
+		return
+	}
+
+	err = ns.UpdateNotification(id, n)
 	if err != nil {
 		model.NewErrorResponse(404, "Not Found").WriteError(w)
 		return
